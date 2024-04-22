@@ -6,11 +6,14 @@ function preload() {
     btn_creditos = loadImage('assets/btn_creditos.png')
     btn_modal = loadImage('assets/Modal.png')
     closeBtn = loadImage('assets/close.png')
+    modal_guide = loadImage('assets/ModalGuide.png')
+    creditos = loadImage('assets/creditos.png')
+    gameIsNotStarted = loadImage('assets/game.png')
   }
   
   function setup() {
     createCanvas(1920, 1000);
-    modal = false
+    modal = 0
   }
   
   
@@ -33,7 +36,7 @@ function draw() {
     }
 
 
-    if (modal == true) {
+    if (modal >= 1) {
         image(btn_modal, 313, 154)
         
         if (mouseX > 1535 && mouseX < 1535 + 50 && mouseY > 186 && mouseY < 186 + 50) {
@@ -42,22 +45,34 @@ function draw() {
             image(closeBtn, 1535,186)
         }
     }
+    //O Modal 1 representa o Guia de Controles.
+    if (modal == 1) {
+        image(modal_guide, 313, 154)
+    }
+
+    if (modal == 2) {
+        image(creditos, 313, 154)
+    }
+
+    if ( modal == 3) {
+        image(gameIsNotStarted, 313, 154)
+    }
   }
 
 function mouseReleased(event) {
     if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 376 && mouseY < 376 + 178) {
-        window.location.href = 'game.html'
+        modal = 3
     }
     if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 520 && mouseY < 520 + 178) {
-        modal = true
+        modal = 1
     }
     if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 660 && mouseY < 660 + 178) {
-        modal = true
+        modal = 2
     }
 
-    if (modal == true) {
+    if (modal >= 1) {
         if (mouseX > 1535 && mouseX < 1535 + 50 && mouseY > 186 && mouseY < 186 + 50) {
-            modal = false
+            modal = 0
         }
     }
 }
