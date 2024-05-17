@@ -55,20 +55,25 @@ function draw() {
     }
 
     if ( modal == 3) {
-        image(gameIsNotStarted, 313, 154)
+        //sendo player to /game
+        window.location.href = "/game.html"
     }
   }
 
 function mouseReleased(event) {
-    if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 376 && mouseY < 376 + 178) {
-        modal = 3
+
+    if (modal == 0) {
+        if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 376 && mouseY < 376 + 178) {
+            modal = 3
+        }
+        if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 520 && mouseY < 520 + 178) {
+            modal = 1
+        }
+        if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 660 && mouseY < 660 + 178) {
+            modal = 2
+        }
     }
-    if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 520 && mouseY < 520 + 178) {
-        modal = 1
-    }
-    if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 660 && mouseY < 660 + 178) {
-        modal = 2
-    }
+
 
     if (modal >= 1) {
         if (mouseX > 1535 && mouseX < 1535 + 50 && mouseY > 186 && mouseY < 186 + 50) {
