@@ -1,83 +1,98 @@
 function preload() {
-    bg = loadImage('assets/game_bg.png');
-    title = loadImage('assets/title.png');
-    btn_start = loadImage('assets/btn_start.png');
-    btn_controls = loadImage('assets/btn_controls.png')
-    btn_creditos = loadImage('assets/btn_creditos.png')
-    btn_modal = loadImage('assets/Modal.png')
+    soundFormats('mp3', 'ogg');
+    bg = loadImage('assets/cenarios/4.webp');
+    title = loadImage('assets/ui/GameTitle.webp');
+    btn_start = loadImage('assets/ui/btn_start.webp');
+    btn_controls = loadImage('assets/ui/btn_controls.webp')
+    btn_creditos = loadImage('assets/ui/btn_creditos.webp')
+    btn_modal = loadImage('assets/ui/modal.webp')
     closeBtn = loadImage('assets/close.png')
-    modal_guide = loadImage('assets/ModalGuide.png')
+    modal_guide = loadImage('assets/ui/Controles.webp')
     creditos = loadImage('assets/creditos.png')
-    gameIsNotStarted = loadImage('assets/game.png')
+    pop = loadSound('assets/audio/pop.mp3')
+    menuSound = loadSound('assets/audio/loop.mp3')
   }
-  
   function setup() {
     createCanvas(1920, 1000);
+
+    setTimeout(() => {
+        menuSound.setVolume(0.1);
+        menuSound.play();
+            menuSound.loop();
+    }, 500);
     modal = 0
   }
-  
-  
+let buttonsMap = new Map();
+
+function buildButton(img, imgName, x, y,scaleSelected) {
+    if (!scaleSelected) {
+        scaleSelected = 1;
+    }
+    let sx = img.width * scaleSelected;
+    let sy = img.height * scaleSelected;
+    let diferenceX = (sx - img.width) / 2;
+    let diferenceY = (sy - img.height) / 2;
+    if (mouseX > x && mouseX < x + img.width && mouseY > y && mouseY < y + img.height) {
+        image(img, x-diferenceX, y-diferenceY, sx, sy);
+        buttonsMap.set(imgName, {img:img,x: x-diferenceX, y: y-diferenceY, width: sx, height: sy});
+    } else {
+        image(img,x,y);
+        buttonsMap.set(imgName, {img:img,x: x, y: y, width: img.width, height: img.height});
+    }
+}
+
+function trackButtonAction(imgName, action) {
+    let button = buttonsMap.get(imgName);
+    if (button) {
+        if (mouseX > button.x && mouseX < button.x + button.width && mouseY > button.y && mouseY < button.y + button.height) {
+            pop.play();
+            action();
+        }
+    }
+}
+
+
 function draw() {
     image(bg, 0, 0);
     image(title, 235, 77)
-    image(btn_start, 681,376)
-    if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 376 && mouseY < 376 + 178) {
-        image(btn_start, 681-5, 376-5, 558+10, 178+10)
-        
-    }
-
-    image(btn_controls, 681, 520)
-    if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 520 && mouseY < 520 + 178) {
-        image(btn_controls, 681-5, 520-5, 558+10, 178+10)
-    }
-    image(btn_creditos, 681, 660)
-    if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 660 && mouseY < 660 + 178) {
-        image(btn_creditos, 681-5, 660-5, 558+10, 178+10)
-    }
-
+    buildButton(btn_start,'btn_start', 681,376,1.05)
+    buildButton(btn_controls,'btn_constrols', 681,520,1.05)
+    buildButton(btn_creditos,'btn_creditos', 681,660,1.05)
 
     if (modal >= 1) {
         image(btn_modal, 313, 154)
-        
-        if (mouseX > 1535 && mouseX < 1535 + 50 && mouseY > 186 && mouseY < 186 + 50) {
-            image(closeBtn, 1535-7, 186-7, 50+10, 50+10)
-        } else {
-            image(closeBtn, 1535,186)
-        }
+        buildButton(closeBtn,'closeBtn', 1535,186,1.1)
     }
-    //O Modal 1 representa o Guia de Controles.
+
     if (modal == 1) {
         image(modal_guide, 313, 154)
     }
-
     if (modal == 2) {
         image(creditos, 313, 154)
     }
 
-    if ( modal == 3) {
-        //sendo player to /game
-        window.location.href = "/game.html"
-    }
   }
-
 function mouseReleased(event) {
 
-    if (modal == 0) {
-        if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 376 && mouseY < 376 + 178) {
-            modal = 3
+        if (modal == 0) {
+            trackButtonAction('btn_start', () => {
+                window.location.href = "/game.html"
+            });
+    
+            trackButtonAction('btn_constrols', () => {
+                modal = 1;
+            });
+    
+            trackButtonAction('btn_creditos', () => {
+                modal = 2;
+            });
         }
-        if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 520 && mouseY < 520 + 178) {
-            modal = 1
-        }
-        if (mouseX > 681 && mouseX < 681 + 558 && mouseY > 660 && mouseY < 660 + 178) {
-            modal = 2
-        }
-    }
 
-
-    if (modal >= 1) {
-        if (mouseX > 1535 && mouseX < 1535 + 50 && mouseY > 186 && mouseY < 186 + 50) {
-            modal = 0
+        if (modal >= 1) {
+            trackButtonAction('closeBtn', () => {
+                modal = 0;
+            });
         }
-    }
+
+    
 }

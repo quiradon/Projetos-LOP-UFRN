@@ -1,16 +1,37 @@
 function preload() {
-    cenarios = [loadImage('assets/cenarios/1.png'), loadImage('assets/cenarios/2.png'), loadImage('assets/cenarios/3.png'), loadImage('assets/cenarios/4.png'), loadImage('assets/cenarios/5.png'), loadImage('assets/cenarios/6.png'), loadImage('assets/cenarios/7.png'), loadImage('assets/cenarios/8.png'), loadImage('assets/cenarios/9.png'), loadImage('assets/cenarios/10.png'), loadImage('assets/cenarios/11.png'), loadImage('assets/cenarios/12.png'), loadImage('assets/cenarios/13.png')]
-    personagem = [loadImage('assets/personagem/1.png'),loadImage('assets/personagem/2.png'),loadImage('assets/personagem/3.png'),loadImage('assets/personagem/4.png'),loadImage('assets/personagem/5.png'),loadImage('assets/personagem/6.png'),loadImage('assets/personagem/7.png'),loadImage('assets/personagem/8.png'),loadImage('assets/personagem/9.png'),]
-    assets = [loadImage('assets/ui/textCard.png')]
+    soundFormats('mp3', 'ogg');
+    cenarios = [loadImage('assets/cenarios/1.webp'), loadImage('assets/cenarios/2.webp'), loadImage('assets/cenarios/3.webp'), loadImage('assets/cenarios/4.webp'), loadImage('assets/cenarios/5.webp'), loadImage('assets/cenarios/6.webp'), loadImage('assets/cenarios/7.webp'), loadImage('assets/cenarios/8.webp'), loadImage('assets/cenarios/9.webp'), loadImage('assets/cenarios/10.webp'), loadImage('assets/cenarios/11.webp'), loadImage('assets/cenarios/12.webp'), loadImage('assets/cenarios/13.webp')]
+    personagem = [loadImage('assets/personagem/1.webp'),loadImage('assets/personagem/2.webp'),loadImage('assets/personagem/3.webp'),loadImage('assets/personagem/4.webp'),loadImage('assets/personagem/5.webp'),loadImage('assets/personagem/6.webp'),loadImage('assets/personagem/7.webp'),loadImage('assets/personagem/8.webp'),loadImage('assets/personagem/9.webp'),]
+    assets = [loadImage('assets/ui/textCard.webp')]
     fonts = [loadFont('assets/fonts/NerkoOne-Regular.ttf'),loadFont('assets/fonts/Neucha-Regular.ttf')]
+    buttons = [loadImage('assets/ui/up.png'),loadImage('assets/ui/down.png'),loadImage('assets/ui/left.png'),loadImage('assets/ui/right.png')]
+    sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3')]
+    
+
 }
 
+
+    // ? Definição de variáveis
+let alternativaA = "A"
+let alternativaB = ""
+let alternativaC = ""
+let alternativaD = ""
+let respostaCorreta = 0
+let Respostas = []
+let Vidas = 3
+let numChars = 0;
+let texto = ''
+let dialog
+let previousDialog
 //* Util
-let x = 0;
-let y = 0;
-
-
-function gerarDialogo(texto, nome, idPersonagem) {
+/**
+ * 
+ * @param {strig} texto 
+ * @param {string} nome 
+ * @param {number} idPersonagem 
+ */
+function gerarDialogo(texto_input, nome, idPersonagem) {
+    texto = texto_input;
     image(assets[0], 92, 732);
     image(personagem[idPersonagem], 1198, 102);
     textSize(40);
@@ -19,33 +40,123 @@ function gerarDialogo(texto, nome, idPersonagem) {
     fill("#310E10")
     text(nome, 140, 785);
     
-let tamanhoFonte = 35;
-let larguraMaxima = 1700; 
+    let tamanhoFonte = 35;
+    let larguraMaxima = 1700; 
 
-textFont(fonts[0]);
-fill("#310E10");
-textSize(tamanhoFonte);
-textLeading(30);
-
-if (texto.length >= 400) {
-while (textWidth(texto) > larguraMaxima) {
-    tamanhoFonte--;
+    textFont(fonts[0]);
+    fill("#310E10");
     textSize(tamanhoFonte);
+    textLeading(30);
+
+    if (texto.length >= 400) {
+        while (textWidth(texto) > larguraMaxima) {
+            tamanhoFonte--;
+            textSize(tamanhoFonte);
+        }
+    }
+
+    // Exibe apenas uma parte do texto
+    let textoParcial = texto_input.substring(0, numChars);
+    text(textoParcial, 140, 830, larguraMaxima, 150);
 }
+
+/**
+ * 
+ * @param {number} tipo 
+ * @param {string} pergunta 
+ * @param {number} x 
+ * @param {number} y 
+ */
+
+let buttonsMap = new Map();
+
+function buildResponseBTN(img, imgName, x, y,scaleSelected,texto) {
+    if (!scaleSelected) {
+        scaleSelected = 1;
+    }
+    let sx = img.width * scaleSelected;
+    let sy = img.height * scaleSelected;
+    let diferenceX = (sx - img.width) / 2;
+    let diferenceY = (sy - img.height) / 2;
+    textFont(fonts[0]);
+    fill("#310E10");
+    textAlign('CENTER')
+    if (mouseX > x && mouseX < x + img.width && mouseY > y && mouseY < y + img.height) {
+        image(img, x-diferenceX, y-diferenceY, sx, sy);
+        textSize(37);
+        text(texto, x+75, y+68)
+        buttonsMap.set(imgName, {img:img,x: x-diferenceX, y: y-diferenceY, width: sx, height: sy});
+    } else {
+        image(img,x,y);
+        textSize(35);
+        text(texto, x+75, y+68)
+        buttonsMap.set(imgName, {img:img,x: x, y: y, width: img.width, height: img.height});
+    }
 }
-text(texto, 140, 830, larguraMaxima, 150);
+
+function trackButtonAction(imgName, action) {
+    let button
+    if (buttonsMap.has(imgName)) {
+        button = buttonsMap.get(imgName);
+    }
+    if (!button) {
+        return;
+    }
+    if (mouseX > button.x && mouseX < button.x + button.width && mouseY > button.y && mouseY < button.y + button.height) {
+        sounds[0].play(); 
+        action();
+    }
 }
+
 
 function setup() {
     createCanvas(1920, 1000);
+   
 }
   
 function draw() {
     image(cenarios[11],0,0);
-    gerarDialogo("Boa noite esse é um teste, e melito compre comission da Lily", "Zé da Manga", 8);
+    if (dialog != previousDialog) {
+        numChars = 0;
+        previousDialog = dialog;
+    }
+    previousDialog = dialog
+    if (dialog == 0) {
+        gerarDialogo("Animação do texto aparecendo, parece mágia eu sei mas é apenas javascript", "Zé da Manga", 3);
+    } else {
+        gerarDialogo("Esse é um teste de animações para o jogo", "Zé da Manga", 3);
+    }   
 
+
+
+    if (numChars < texto.length) {
+        numChars++;
+    }
+    if (alternativaA != "") {
+        buildResponseBTN(buttons[0],'up_btn', 92, 598,1.015,alternativaA);
+    }
+    if (alternativaB != "") {
+        buildResponseBTN(buttons[1],'down_btn', 92, 470,1.015,alternativaB);
+    }
+    if (alternativaC != "") {
+        buildResponseBTN(buttons[2],'left_btn', 92, 342,1.015,alternativaC);
+    }
+    if (alternativaD != "") {
+        buildResponseBTN(buttons[3],'right_btn', 92, 214,1.015,alternativaD);
+    }
 }
 
 function mouseReleased(event) {
-
+    trackButtonAction('left_btn', () => {
+        console.log("Botão esquerda")
+    });
+    trackButtonAction('right_btn', () => {
+        console.log("Botão direita")
+    });
+    trackButtonAction('down_btn', () => {
+        console.log("Botão baixo")
+    });
+    trackButtonAction('up_btn', () => {
+        console.log("Botão cima")
+    });
 }
