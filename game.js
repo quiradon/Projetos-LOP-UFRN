@@ -2,27 +2,29 @@ function preload() {
     soundFormats('mp3', 'ogg');
     cenarios = [loadImage('assets/cenarios/1.webp'), loadImage('assets/cenarios/2.webp'), loadImage('assets/cenarios/3.webp'), loadImage('assets/cenarios/4.webp'), loadImage('assets/cenarios/5.webp'), loadImage('assets/cenarios/6.webp'), loadImage('assets/cenarios/7.webp'), loadImage('assets/cenarios/8.webp'), loadImage('assets/cenarios/9.webp'), loadImage('assets/cenarios/10.webp'), loadImage('assets/cenarios/11.webp'), loadImage('assets/cenarios/12.webp'), loadImage('assets/cenarios/13.webp')]
     personagem = [loadImage('assets/personagem/1.webp'),loadImage('assets/personagem/2.webp'),loadImage('assets/personagem/3.webp'),loadImage('assets/personagem/4.webp'),loadImage('assets/personagem/5.webp'),loadImage('assets/personagem/6.webp'),loadImage('assets/personagem/7.webp'),loadImage('assets/personagem/8.webp'),loadImage('assets/personagem/9.webp'),]
-    assets = [loadImage('assets/ui/textCard.webp')]
+    assets = [loadImage('assets/ui/textCard.webp'),loadImage('assets/ui/Vida.png'),loadImage('assets/ui/dead.png')]
     fonts = [loadFont('assets/fonts/NerkoOne-Regular.ttf'),loadFont('assets/fonts/Neucha-Regular.ttf')]
     buttons = [loadImage('assets/ui/up.png'),loadImage('assets/ui/down.png'),loadImage('assets/ui/left.png'),loadImage('assets/ui/right.png')]
-    sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3')]
+    sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3'),loadSound('assets/audio/fail.mp3'), loadSound('assets/audio/extra.mp3'),loadSound('assets/audio/dead.mp3'),loadSound('assets/audio/scribble-6144.mp3')]
     
 
 }
 
 
     // ? Definição de variáveis
-let alternativaA = "A"
-let alternativaB = ""
-let alternativaC = ""
-let alternativaD = ""
+let alternativaA = "Próximo"
+let alternativaB = "Não Valeu"
+let alternativaC = "Eu te amo!"
+let alternativaD = "Eu te Odeio!"
 let respostaCorreta = 0
 let Respostas = []
 let Vidas = 3
-let numChars = 0;
+let previousVidas = Vidas
+let numChars = 0
 let texto = ''
 let dialog
 let previousDialog
+
 //* Util
 /**
  * 
@@ -108,6 +110,30 @@ function trackButtonAction(imgName, action) {
     }
 }
 
+function drawLifes() {
+    for (let i = 0; i < Vidas; i++) {
+    image(assets[1], 1650 + (i * 75), 40);
+    }
+    let soundLostLive = sounds[2];
+    let soundWinLive = sounds[3];
+    let Dead = sounds[4];
+    if (Vidas == 0) {
+        image(assets[2], 0, 0);  
+    }
+
+    if (Vidas == 0 && !Dead.isPlaying()) {
+        
+        Dead.play();       
+    }
+
+    if (Vidas < previousVidas) {
+        soundLostLive.play();
+    }
+    if (Vidas > previousVidas) {
+        soundWinLive.play();
+    }
+    previousVidas = Vidas;
+}
 
 function setup() {
     createCanvas(1920, 1000);
@@ -116,6 +142,7 @@ function setup() {
   
 function draw() {
     image(cenarios[11],0,0);
+
     if (dialog != previousDialog) {
         numChars = 0;
         previousDialog = dialog;
@@ -128,22 +155,30 @@ function draw() {
     }   
 
 
+    drawLifes();
 
-    if (numChars < texto.length) {
-        numChars++;
+    if (Vidas > 0) {
+        let somEscrita = sounds[5]
+        if (numChars < texto.length) {
+            if (numChars <= texto.length && !somEscrita.isPlaying()) {
+                somEscrita.play();
+            }
+            numChars++;
+        }
+        if (alternativaA != "") {
+            buildResponseBTN(buttons[0],'up_btn', 92, 598,1.015,alternativaA);
+        }
+        if (alternativaB != "") {
+            buildResponseBTN(buttons[1],'down_btn', 92, 470,1.015,alternativaB);
+        }
+        if (alternativaC != "") {
+            buildResponseBTN(buttons[2],'left_btn', 92, 342,1.015,alternativaC);
+        }
+        if (alternativaD != "") {
+            buildResponseBTN(buttons[3],'right_btn', 92, 214,1.015,alternativaD);
+        }
     }
-    if (alternativaA != "") {
-        buildResponseBTN(buttons[0],'up_btn', 92, 598,1.015,alternativaA);
-    }
-    if (alternativaB != "") {
-        buildResponseBTN(buttons[1],'down_btn', 92, 470,1.015,alternativaB);
-    }
-    if (alternativaC != "") {
-        buildResponseBTN(buttons[2],'left_btn', 92, 342,1.015,alternativaC);
-    }
-    if (alternativaD != "") {
-        buildResponseBTN(buttons[3],'right_btn', 92, 214,1.015,alternativaD);
-    }
+
 }
 
 function mouseReleased(event) {
