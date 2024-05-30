@@ -1,11 +1,11 @@
 function preload() {
     soundFormats('mp3', 'ogg');
     cenarios = [loadImage('assets/cenarios/1.webp'), loadImage('assets/cenarios/2.webp'), loadImage('assets/cenarios/3.webp'), loadImage('assets/cenarios/4.webp'), loadImage('assets/cenarios/5.webp'), loadImage('assets/cenarios/6.webp'), loadImage('assets/cenarios/7.webp'), loadImage('assets/cenarios/8.webp'), loadImage('assets/cenarios/9.webp'), loadImage('assets/cenarios/10.webp'), loadImage('assets/cenarios/11.webp'), loadImage('assets/cenarios/12.webp'), loadImage('assets/cenarios/13.webp')]
-    personagem = [loadImage('assets/personagem/1.webp'),loadImage('assets/personagem/2.webp'),loadImage('assets/personagem/3.webp'),loadImage('assets/personagem/4.webp'),loadImage('assets/personagem/5.webp'),loadImage('assets/personagem/6.webp'),loadImage('assets/personagem/7.webp'),loadImage('assets/personagem/8.webp'),loadImage('assets/personagem/9.webp'),]
+    personagem = [loadImage('assets/personagem/0.webp'),loadImage('assets/personagem/1.webp'),loadImage('assets/personagem/2.webp'),loadImage('assets/personagem/3.webp'),loadImage('assets/personagem/4.webp'),loadImage('assets/personagem/5.webp'),loadImage('assets/personagem/6.webp'),loadImage('assets/personagem/7.webp'),loadImage('assets/personagem/8.webp'),]
     assets = [loadImage('assets/ui/textCard.webp'),loadImage('assets/ui/Vida.png'),loadImage('assets/ui/dead.png')]
     fonts = [loadFont('assets/fonts/NerkoOne-Regular.ttf'),loadFont('assets/fonts/Neucha-Regular.ttf')]
     buttons = [loadImage('assets/ui/up.png'),loadImage('assets/ui/down.png'),loadImage('assets/ui/left.png'),loadImage('assets/ui/right.png')]
-    sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3'),loadSound('assets/audio/fail.mp3'), loadSound('assets/audio/extra.mp3'),loadSound('assets/audio/dead.mp3'),loadSound('assets/audio/scribble-6144.mp3')]
+    sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3'),loadSound('assets/audio/fail.mp3'), loadSound('assets/audio/extra.mp3'),loadSound('assets/audio/dead.mp3'),loadSound('assets/audio/scribble-6144.mp3'),loadSound('assets/audio/timer.mp3')]
     
 
 }
@@ -24,6 +24,76 @@ let numChars = 0
 let texto = ''
 let dialog
 let previousDialog
+let defaultTime = 30
+let tempo = defaultTime
+let timer;
+let timeSet = false;
+let historia = [
+    {
+        'texto': 'Animação do texto aparecendo, parece mágia eu sei mas é apenas javascript',
+        'personagem': 3,
+        'dica' : "Dica do Zé da Manga",
+        'alternativas': [
+            {
+                'texto': 'Próximo',
+                'resposta': 0
+            },
+            {
+                'texto': 'Não Valeu',
+                'resposta': 1
+            },
+            {
+                'texto': 'Eu te amo!',
+                'resposta': 1
+            },
+            {
+                'texto': 'Eu te Odeio!',
+                'resposta': 1
+            }
+        ]
+    }
+]
+let TimeIsEnable = false
+
+let personagens = [
+    {
+        'nome': 'Guarda da Cidade',
+        'imagem': 0
+    },
+    {
+        'nome': 'A Fantasma',
+        'imagem': 1
+    },
+    {
+        'nome': 'A Camponesa',
+        'imagem': 2
+    },
+    {
+        'nome' : 'O Zé da Manga',
+        'imagem' : 3
+    },
+    {
+        'nome' : 'A Goblina da Floresta',
+        'imagem' : 4
+    },
+    {
+        'nome' : 'A Feiticeira',
+        'imagem' : 5
+    },
+    {
+        'nome' : 'A Fazedora de Pães',
+        'imagem' : 6
+    },
+    {
+        'nome' : 'O Barão',
+        'imagem' : 7
+    },
+    {
+        nome: 'O Goblin Biscoiteiro',
+        imagem: 8
+    }
+]
+
 
 //* Util
 /**
@@ -62,6 +132,27 @@ function gerarDialogo(texto_input, nome, idPersonagem) {
     text(textoParcial, 140, 830, larguraMaxima, 150);
 }
 
+function gerarTimer(){
+
+    if (TimeIsEnable) {
+        textSize(40);
+        textFont(fonts[0]);
+        if (tempo > 10) {
+            fill("#FFFFFF");
+        } else{
+            fill("#FF0000");
+        }
+        text("Tempo: " + tempo+"s", 1454, 65);
+    }
+}
+
+function lostLife() {
+    Vidas--;
+    if (Vidas == 0) {
+        console.log("Game Over");
+    }
+}
+
 /**
  * 
  * @param {number} tipo 
@@ -82,7 +173,6 @@ function buildResponseBTN(img, imgName, x, y,scaleSelected,texto) {
     let diferenceY = (sy - img.height) / 2;
     textFont(fonts[0]);
     fill("#310E10");
-    textAlign('CENTER')
     if (mouseX > x && mouseX < x + img.width && mouseY > y && mouseY < y + img.height) {
         image(img, x-diferenceX, y-diferenceY, sx, sy);
         textSize(37);
@@ -118,15 +208,15 @@ function drawLifes() {
     let soundWinLive = sounds[3];
     let Dead = sounds[4];
     if (Vidas == 0) {
-        image(assets[2], 0, 0);  
+        image(assets[2], 0, 0); 
+        buildResponseBTN(buttons[2],'reset', 680, 707,1.015,"Reiniciar"); 
     }
 
     if (Vidas == 0 && !Dead.isPlaying()) {
-        
         Dead.play();       
     }
 
-    if (Vidas < previousVidas) {
+    if (Vidas < previousVidas && Vidas != 0) {
         soundLostLive.play();
     }
     if (Vidas > previousVidas) {
@@ -137,26 +227,34 @@ function drawLifes() {
 
 function setup() {
     createCanvas(1920, 1000);
-   
+    timer = setInterval(() => {
+        if (Vidas !== 0) {
+            if (TimeIsEnable == true) {
+
+                if (tempo == 0) {
+                    TimeIsEnable = false;
+                    lostLife();
+                    sounds[6].stop();
+                    tempo = defaultTime;
+                }
+    
+                if (tempo == 15 && !sounds[6].isPlaying()) {
+                    sounds[6].play();
+                }
+    
+                tempo--;
+            }
+        }
+    }, 1000);
 }
   
 function draw() {
     image(cenarios[11],0,0);
 
-    if (dialog != previousDialog) {
-        numChars = 0;
-        previousDialog = dialog;
-    }
-    previousDialog = dialog
-    if (dialog == 0) {
-        gerarDialogo("Animação do texto aparecendo, parece mágia eu sei mas é apenas javascript", "Zé da Manga", 3);
-    } else {
-        gerarDialogo("Esse é um teste de animações para o jogo", "Zé da Manga", 3);
-    }   
+
 
 
     drawLifes();
-
     if (Vidas > 0) {
         let somEscrita = sounds[5]
         if (numChars < texto.length) {
@@ -165,6 +263,25 @@ function draw() {
             }
             numChars++;
         }
+        if (numChars == texto.length && numChars != 0 && !timeSet) {
+            TimeIsEnable = true;
+            timeSet = true;
+        }
+        
+
+
+        if (dialog != previousDialog) {
+            numChars = 0;
+            previousDialog = dialog;
+        }
+        previousDialog = dialog
+        if (dialog == 0) {
+            gerarDialogo("Animação do texto aparecendo, parece mágia eu sei mas é apenas javascript", "Zé da Manga", 3);
+        } else {
+            gerarDialogo("Esse é um teste de animações para o jogoaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaa aaaaaa", "Zé da Manga", 3);
+        }   
+        gerarTimer();
+
         if (alternativaA != "") {
             buildResponseBTN(buttons[0],'up_btn', 92, 598,1.015,alternativaA);
         }
@@ -182,6 +299,7 @@ function draw() {
 }
 
 function mouseReleased(event) {
+    if (Vidas > 0) {
     trackButtonAction('left_btn', () => {
         console.log("Botão esquerda")
     });
@@ -194,4 +312,12 @@ function mouseReleased(event) {
     trackButtonAction('up_btn', () => {
         console.log("Botão cima")
     });
+}
+
+
+if (Vidas == 0) {
+    trackButtonAction('reset', () => {
+        window.location.href = "/index.html"
+    })};
+
 }
