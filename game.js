@@ -6,12 +6,18 @@ function preload() {
     fonts = [loadFont('assets/fonts/NerkoOne-Regular.ttf'),loadFont('assets/fonts/Neucha-Regular.ttf')]
     buttons = [loadImage('assets/ui/up.png'),loadImage('assets/ui/down.png'),loadImage('assets/ui/left.png'),loadImage('assets/ui/right.png')]
     sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3'),loadSound('assets/audio/fail.mp3'), loadSound('assets/audio/extra.mp3'),loadSound('assets/audio/dead.mp3'),loadSound('assets/audio/scribble-6144.mp3'),loadSound('assets/audio/timer.mp3')]
-    
+    PowerUps = [loadImage('assets/ui/powerups/caixa0.png'),loadImage('assets/ui/powerups/caixa1.png'),loadImage('assets/ui/powerups/Tempo0.png'),loadImage('assets/ui/powerups/Tempo1.png')]
 
 }
+/**
+ * *  Power Ups
+ * ? Tempo Extra
+ * ? Elimina 1 Alternativa Errada
+ * ? Dica
+ * ? [X] Caixa Misteriosa (Pega um Power Up Aleatório) [Bau]
+ */
 
-
-    // ? Definição de variáveis
+// ? Definição de variáveis
 let alternativaA = "Próximo"
 let alternativaB = "Não Valeu"
 let alternativaC = "Eu te amo!"
@@ -94,6 +100,9 @@ let personagens = [
     }
 ]
 
+let PowerUpsSelect = [0,1,2,3]
+
+let Pontos = 0
 
 //* Util
 /**
@@ -142,7 +151,7 @@ function gerarTimer(){
         } else{
             fill("#FF0000");
         }
-        text("Tempo: " + tempo+"s", 1454, 65);
+        text("Tempo: " + tempo+"s", 1454, 70);
     }
 }
 
@@ -152,6 +161,43 @@ function lostLife() {
         console.log("Game Over");
     }
 }
+
+function gerarPontos() {
+    textSize(40);
+    textFont(fonts[0]);
+    fill("#FFFFFF");
+    text("Pontos: " + Pontos, 1280, 70);
+
+}
+
+function gerarPowerUps() {
+        if (PowerUpsSelect.includes(3)) {
+            DrawPowerUps(PowerUps[0], 'caixaMisteriosa', 461, 90, 1.15);
+        } else {DrawPowerUps(PowerUps[1], 'caixaMisteriosa', 461, 90, 1.15);}
+        console.log(PowerUpsSelect.includes(0));
+        if (PowerUpsSelect.includes(0)) {
+            DrawPowerUps(PowerUps[3], 'tempoExtra', 100, 90, 1.15);
+        } else {DrawPowerUps(PowerUps[2], 'tempoExtra', 100, 90, 1.15);} 
+}
+
+function DrawPowerUps(file, name, x, y, scaleSelected) {
+    if (!scaleSelected) {
+        scaleSelected = 1;
+    }
+    let sx = file.width * scaleSelected;
+    let sy = file.height * scaleSelected;
+    let diferenceX = (sx - file.width) / 2;
+    let diferenceY = (sy - file.height) / 2;
+    if (mouseX > x && mouseX < x + file.width && mouseY > y && mouseY < y + file.height) {
+        image(file, x-diferenceX, y-diferenceY, sx, sy);
+        buttonsMap.set(name, {img:file,x: x-diferenceX, y: y-diferenceY, width: sx, height: sy});
+    } else {
+        image(file,x,y);
+        buttonsMap.set(name, {img:file,x: x, y: y, width: file.width, height: file.height});
+    }
+
+}
+
 
 /**
  * 
@@ -253,9 +299,10 @@ function draw() {
 
 
 
-
+ 
     drawLifes();
     if (Vidas > 0) {
+        gerarPowerUps()
         let somEscrita = sounds[5]
         if (numChars < texto.length) {
             if (numChars <= texto.length && !somEscrita.isPlaying()) {
@@ -281,6 +328,7 @@ function draw() {
             gerarDialogo("Esse é um teste de animações para o jogoaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaa aaaaaa", "Zé da Manga", 3);
         }   
         gerarTimer();
+        gerarPontos();
 
         if (alternativaA != "") {
             buildResponseBTN(buttons[0],'up_btn', 92, 598,1.015,alternativaA);
