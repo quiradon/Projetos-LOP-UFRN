@@ -82,12 +82,36 @@ let historia = [
         'alternativas': ["Qual foi Truta", "Tá de cao né?", "", ""],
         'timer' : true,
         'correta' : 0
+    },
+    {
+        'texto': 'O que é um peixe voador?',
+        'personagem': 5,
+        'dica' : "Dica do Zé da Manga",
+        'alternativas': ["Um pássaro", "Um peixe", "Um avião", "Uma piada"],
+        'timer' : true,
+        'correta' : 1
     }
 ]
 let indice = 0
 let Alternativas = historia[indice].alternativas
-
-
+let transition = 0
+let transOpacity = 0
+function pageTransition() {
+    //crie um retangulo que ocupe a tela toda
+    fill(0, 0, 0, transOpacity);
+    rect(0, 0, width, height);
+    //faça a opacidade aumentar e então diminuir 
+    //enquanto transição for maior que 0 e menor que 255
+    if (transition > 0 && transition < 255) {
+        transOpacity += 5;
+    } else if (transition > 255 && transOpacity > 0) {
+        transOpacity -= 5;
+    }
+    if (transition <= 600) {
+        transition += 1;
+    }
+    
+}
 
 
 let PowerUpsSelect = [0,1,2,3]
@@ -166,7 +190,6 @@ function gerarPowerUps() {
         DrawPowerUps(PowerUps[3], 'tempoExtra', 100, 90, PowerUpsSelect.includes(0) ? 1.15 : 1,!PowerUpsSelect.includes(0));
         DrawPowerUps(PowerUps[4], 'eliminaAlternativa', 220, 75, PowerUpsSelect.includes(1) ? 1.15 : 1,!PowerUpsSelect.includes(1));
         DrawPowerUps(PowerUps[6], 'dica', 330, 78, PowerUpsSelect.includes(2) ? 1.15 : 1,!PowerUpsSelect.includes(2));
-
 }
 
 function DrawPowerUps(file, name, x, y, scaleSelected, grayscale) {
@@ -300,6 +323,7 @@ function setup() {
 }
 
 function sucessResponse() {
+    tempo = defaultTime;
     Pontos++;
     indice++;
     Respostas = [];
@@ -311,11 +335,7 @@ function failResponse(id) {
 }
 
 function draw() {
-    image(cenarios[11],0,0);
-
-
-
- 
+    image(cenarios[11],0,0); 
     drawLifes();
     if (Vidas > 0) {
         gerarPowerUps()
@@ -356,7 +376,9 @@ function draw() {
             }
         }
     }
-
+    if (transition > 0) {
+    pageTransition();
+    }
 }
 
 function mouseReleased(event) {
