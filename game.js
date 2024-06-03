@@ -4,9 +4,9 @@ function preload() {
     personagem = [loadImage('assets/personagem/0.webp'),loadImage('assets/personagem/1.webp'),loadImage('assets/personagem/2.webp'),loadImage('assets/personagem/3.webp'),loadImage('assets/personagem/4.webp'),loadImage('assets/personagem/5.webp'),loadImage('assets/personagem/6.webp'),loadImage('assets/personagem/7.webp'),loadImage('assets/personagem/8.webp'),]
     assets = [loadImage('assets/ui/textCard.webp'),loadImage('assets/ui/Vida.png'),loadImage('assets/ui/dead.png')]
     fonts = [loadFont('assets/fonts/NerkoOne-Regular.ttf'),loadFont('assets/fonts/Neucha-Regular.ttf')]
-    buttons = [loadImage('assets/ui/up.png'),loadImage('assets/ui/down.png'),loadImage('assets/ui/left.png'),loadImage('assets/ui/right.png')]
+    buttons = [loadImage('assets/ui/button.png'),loadImage('assets/ui/buttonD.png')]
     sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3'),loadSound('assets/audio/fail.mp3'), loadSound('assets/audio/extra.mp3'),loadSound('assets/audio/dead.mp3'),loadSound('assets/audio/scribble-6144.mp3'),loadSound('assets/audio/timer.mp3')]
-    PowerUps = [loadImage('assets/ui/powerups/caixa0.png'),loadImage('assets/ui/powerups/caixa1.png'),loadImage('assets/ui/powerups/Tempo0.png'),loadImage('assets/ui/powerups/Tempo1.png')]
+    PowerUps = [loadImage('assets/ui/powerups/caixa0.png'),loadImage('assets/ui/powerups/caixa1.png'),loadImage('assets/ui/powerups/Tempo0.png'),loadImage('assets/ui/powerups/Tempo1.png'),loadImage('assets/ui/powerups/Espada.png'),loadImage('assets/ui/powerups/Espada2.png'),loadImage('assets/ui/powerups/Dica.png'),loadImage('assets/ui/powerups/Dica2.png')]
 
 }
 /**
@@ -14,53 +14,10 @@ function preload() {
  * ? Tempo Extra
  * ? Elimina 1 Alternativa Errada
  * ? Dica
- * ? [X] Caixa Misteriosa (Pega um Power Up Aleatório) [Bau]
+ * ? Caixa Misteriosa (Pega um Power Up Aleatório) [Bau]
  */
 
 // ? Definição de variáveis
-let alternativaA = "Próximo"
-let alternativaB = "Não Valeu"
-let alternativaC = "Eu te amo!"
-let alternativaD = "Eu te Odeio!"
-let respostaCorreta = 0
-let Respostas = []
-let Vidas = 3
-let previousVidas = Vidas
-let numChars = 0
-let texto = ''
-let dialog
-let previousDialog
-let defaultTime = 30
-let tempo = defaultTime
-let timer;
-let timeSet = false;
-let historia = [
-    {
-        'texto': 'Animação do texto aparecendo, parece mágia eu sei mas é apenas javascript',
-        'personagem': 3,
-        'dica' : "Dica do Zé da Manga",
-        'alternativas': [
-            {
-                'texto': 'Próximo',
-                'resposta': 0
-            },
-            {
-                'texto': 'Não Valeu',
-                'resposta': 1
-            },
-            {
-                'texto': 'Eu te amo!',
-                'resposta': 1
-            },
-            {
-                'texto': 'Eu te Odeio!',
-                'resposta': 1
-            }
-        ]
-    }
-]
-let TimeIsEnable = false
-
 let personagens = [
     {
         'nome': 'Guarda da Cidade',
@@ -99,6 +56,39 @@ let personagens = [
         imagem: 8
     }
 ]
+let Respostas = []
+let Vidas = 3
+let previousVidas = Vidas
+let numChars = 0
+let texto = ''
+let previousDialog
+let defaultTime = 30
+let tempo = defaultTime
+let timer;
+let TimeIsEnable = false
+let historia = [
+    {
+        'texto': 'Animação do texto aparecendo, parece mágia eu sei mas é apenas javascript',
+        'personagem': 3,
+        'dica' : "Dica do Zé da Manga",
+        'alternativas': ["Próximo", "Não Valeu", "Eu te amo!", "Eu te Odeio!"],
+        'timer' : false,
+        'correta' : 0
+    },
+    {
+        'texto': 'Uwu Senpai, você é tão kawaii, me nota por favor',
+        'personagem': 4,
+        'dica' : "Dica do Zé da Manga",
+        'alternativas': ["Qual foi Truta", "Tá de cao né?", "", ""],
+        'timer' : true,
+        'correta' : 0
+    }
+]
+let indice = 0
+let Alternativas = historia[indice].alternativas
+
+
+
 
 let PowerUpsSelect = [0,1,2,3]
 
@@ -171,18 +161,20 @@ function gerarPontos() {
 }
 
 function gerarPowerUps() {
-        if (PowerUpsSelect.includes(3)) {
-            DrawPowerUps(PowerUps[0], 'caixaMisteriosa', 461, 90, 1.15);
-        } else {DrawPowerUps(PowerUps[1], 'caixaMisteriosa', 461, 90, 1.15);}
-        console.log(PowerUpsSelect.includes(0));
-        if (PowerUpsSelect.includes(0)) {
-            DrawPowerUps(PowerUps[3], 'tempoExtra', 100, 90, 1.15);
-        } else {DrawPowerUps(PowerUps[2], 'tempoExtra', 100, 90, 1.15);} 
+
+        DrawPowerUps(PowerUps[0], 'caixaMisteriosa', 461, 85,PowerUpsSelect.includes(3) ? 1.15 : 1,!PowerUpsSelect.includes(3));
+        DrawPowerUps(PowerUps[3], 'tempoExtra', 100, 90, PowerUpsSelect.includes(0) ? 1.15 : 1,!PowerUpsSelect.includes(0));
+        DrawPowerUps(PowerUps[4], 'eliminaAlternativa', 220, 75, PowerUpsSelect.includes(1) ? 1.15 : 1,!PowerUpsSelect.includes(1));
+        DrawPowerUps(PowerUps[6], 'dica', 330, 78, PowerUpsSelect.includes(2) ? 1.15 : 1,!PowerUpsSelect.includes(2));
+
 }
 
-function DrawPowerUps(file, name, x, y, scaleSelected) {
+function DrawPowerUps(file, name, x, y, scaleSelected, grayscale) {
     if (!scaleSelected) {
         scaleSelected = 1;
+    }
+    if (grayscale) {
+        file.filter(GRAY);
     }
     let sx = file.width * scaleSelected;
     let sy = file.height * scaleSelected;
@@ -209,10 +201,11 @@ function DrawPowerUps(file, name, x, y, scaleSelected) {
 
 let buttonsMap = new Map();
 
-function buildResponseBTN(img, imgName, x, y,scaleSelected,texto) {
+function buildResponseBTN(img, imgName, x, y,scaleSelected,texto, grayscale) {
     if (!scaleSelected) {
         scaleSelected = 1;
     }
+
     let sx = img.width * scaleSelected;
     let sy = img.height * scaleSelected;
     let diferenceX = (sx - img.width) / 2;
@@ -220,15 +213,28 @@ function buildResponseBTN(img, imgName, x, y,scaleSelected,texto) {
     textFont(fonts[0]);
     fill("#310E10");
     if (mouseX > x && mouseX < x + img.width && mouseY > y && mouseY < y + img.height) {
-        image(img, x-diferenceX, y-diferenceY, sx, sy);
-        textSize(37);
-        text(texto, x+75, y+68)
-        buttonsMap.set(imgName, {img:img,x: x-diferenceX, y: y-diferenceY, width: sx, height: sy});
+        if (!grayscale) {
+            image(img, x-diferenceX, y-diferenceY, sx, sy);
+            textSize(37);
+            text(texto, x+30, y+68)
+            buttonsMap.set(imgName, {img:img,x: x-diferenceX, y: y-diferenceY, width: sx, height: sy});
+        } else {
+            image(buttons[1],x,y);
+        textSize(35);
+        text(texto, x+30, y+68)
+        buttonsMap.set(imgName, {img:img,x: x, y: y, width: img.width, height: img.height});
+        }
+    } else if (grayscale) {
+        image(buttons[1],x,y);
+        textSize(35);
+        text(texto, x+30, y+68)
+        buttonsMap.set(imgName, {img:img,x: x, y: y, width: img.width, height: img.height});
     } else {
         image(img,x,y);
         textSize(35);
-        text(texto, x+75, y+68)
+        text(texto, x+30, y+68)
         buttonsMap.set(imgName, {img:img,x: x, y: y, width: img.width, height: img.height});
+    
     }
 }
 
@@ -241,7 +247,6 @@ function trackButtonAction(imgName, action) {
         return;
     }
     if (mouseX > button.x && mouseX < button.x + button.width && mouseY > button.y && mouseY < button.y + button.height) {
-        sounds[0].play(); 
         action();
     }
 }
@@ -255,7 +260,7 @@ function drawLifes() {
     let Dead = sounds[4];
     if (Vidas == 0) {
         image(assets[2], 0, 0); 
-        buildResponseBTN(buttons[2],'reset', 680, 707,1.015,"Reiniciar"); 
+        buildResponseBTN(buttons[0],'reset', 680, 707,1.015,"Reiniciar"); 
     }
 
     if (Vidas == 0 && !Dead.isPlaying()) {
@@ -293,7 +298,18 @@ function setup() {
         }
     }, 1000);
 }
-  
+
+function sucessResponse() {
+    Pontos++;
+    indice++;
+    Respostas = [];
+}
+
+function failResponse(id) {
+    lostLife();
+    Respostas.push(id);
+}
+
 function draw() {
     image(cenarios[11],0,0);
 
@@ -310,37 +326,34 @@ function draw() {
             }
             numChars++;
         }
-        if (numChars == texto.length && numChars != 0 && !timeSet) {
-            TimeIsEnable = true;
-            timeSet = true;
+        if (numChars == texto.length && numChars != 0) {
+            if (!historia[indice].timer) {
+                tempo = defaultTime;
+                TimeIsEnable = false;
+            } else {
+                TimeIsEnable = true;
+            }
         }
         
-
-
-        if (dialog != previousDialog) {
+        if (indice != previousDialog) {
             numChars = 0;
-            previousDialog = dialog;
+            previousDialog = indice;
+            Respostas = [];
+
         }
-        previousDialog = dialog
-        if (dialog == 0) {
-            gerarDialogo("Animação do texto aparecendo, parece mágia eu sei mas é apenas javascript", "Zé da Manga", 3);
-        } else {
-            gerarDialogo("Esse é um teste de animações para o jogoaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaa aaaaaa", "Zé da Manga", 3);
-        }   
+        previousDialog = indice
+        gerarDialogo(historia[indice].texto,personagens[historia[indice].personagem].nome, personagens[historia[indice].personagem].imagem)
+        Alternativas = historia[indice].alternativas
         gerarTimer();
         gerarPontos();
 
-        if (alternativaA != "") {
-            buildResponseBTN(buttons[0],'up_btn', 92, 598,1.015,alternativaA);
-        }
-        if (alternativaB != "") {
-            buildResponseBTN(buttons[1],'down_btn', 92, 470,1.015,alternativaB);
-        }
-        if (alternativaC != "") {
-            buildResponseBTN(buttons[2],'left_btn', 92, 342,1.015,alternativaC);
-        }
-        if (alternativaD != "") {
-            buildResponseBTN(buttons[3],'right_btn', 92, 214,1.015,alternativaD);
+        const buttonNames = ['0', '1', '2', '3'];
+        let PosBtns = 605
+        for (let i = 0; i < 4; i++) {
+            if (Alternativas[i] != "") {
+                buildResponseBTN(buttons[0], buttonNames[i], 92, PosBtns, 1.015, Alternativas[i], Respostas.includes(i));
+                PosBtns -= 128;
+            }
         }
     }
 
@@ -348,19 +361,80 @@ function draw() {
 
 function mouseReleased(event) {
     if (Vidas > 0) {
-    trackButtonAction('left_btn', () => {
-        console.log("Botão esquerda")
+
+    //? Power Ups
+
+
+    //Alternativas e respostas
+    trackButtonAction('0', () => {
+        sounds[0].play(); 
+        if(!Respostas.includes(0)) {
+            if (0 == historia[indice].correta) {
+                sucessResponse();
+            } else {
+                failResponse(0);
+            }
+        }
+
     });
-    trackButtonAction('right_btn', () => {
-        console.log("Botão direita")
+    trackButtonAction('1', () => {
+        sounds[0].play(); 
+        if(!Respostas.includes(1)) {
+            if (1 == historia[indice].correta) {
+                sucessResponse();
+            } else {
+                failResponse(1);
+            }
+        }
+
     });
-    trackButtonAction('down_btn', () => {
-        console.log("Botão baixo")
+    trackButtonAction('2', () => {
+        sounds[0].play(); 
+        if(!Respostas.includes(2)) {
+            if (2 == historia[indice].correta) {
+                sucessResponse();
+            } else {
+                failResponse(2);
+            }
+        }
     });
-    trackButtonAction('up_btn', () => {
-        console.log("Botão cima")
+    trackButtonAction('3', () => {
+        sounds[0].play(); 
+        if(!Respostas.includes(3)) {
+            if (3 == historia[indice].correta) {
+                sucessResponse();
+            } else {
+                failResponse(3);
+            }
+        }
     });
+
+    //* Power Up Tempo Extra = Adiciona 30 segundos ao tempo    
+    trackButtonAction('tempoExtra', () => {
+        sounds[0].play(); 
+        if (PowerUpsSelect.includes(0) && TimeIsEnable == true) {
+            tempo = tempo + 30;
+            PowerUpsSelect.splice(PowerUpsSelect.indexOf(0),1);
+        }
+    });
+
+    //* Power Up Eliminar Metade das Arternativas
+    trackButtonAction('eliminaAlternativa', () => {
+        sounds[0].play(); 
+        if (PowerUpsSelect.includes(1)) {
+            let correta = historia[indice].correta;
+            let alternativas = [0,1,2,3];
+            alternativas.splice(correta,1);
+            alternativas.splice(Math.floor(Math.random() * alternativas.length),1);
+            Respostas = alternativas;
+            PowerUpsSelect.splice(PowerUpsSelect.indexOf(1),1);
+        }
+    
+    }
+    );
 }
+
+
 
 
 if (Vidas == 0) {
