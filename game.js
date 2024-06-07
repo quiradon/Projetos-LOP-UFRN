@@ -1,7 +1,7 @@
 function preload() {
     soundFormats('mp3', 'ogg');
     cenarios = [loadImage('assets/cenarios/1.webp'), loadImage('assets/cenarios/2.webp'), loadImage('assets/cenarios/3.webp'), loadImage('assets/cenarios/4.webp'), loadImage('assets/cenarios/5.webp'), loadImage('assets/cenarios/6.webp'), loadImage('assets/cenarios/7.webp'), loadImage('assets/cenarios/8.webp'), loadImage('assets/cenarios/9.webp'), loadImage('assets/cenarios/10.webp'), loadImage('assets/cenarios/11.webp'), loadImage('assets/cenarios/12.webp'), loadImage('assets/cenarios/13.webp')]
-    personagem = [loadImage('assets/personagem/0.webp'),loadImage('assets/personagem/1.webp'),loadImage('assets/personagem/2.webp'),loadImage('assets/personagem/3.webp'),loadImage('assets/personagem/4.webp'),loadImage('assets/personagem/5.webp'),loadImage('assets/personagem/6.webp'),loadImage('assets/personagem/7.webp'),loadImage('assets/personagem/8.webp'),]
+    personagem = [loadImage('assets/personagem/0.webp'),loadImage('assets/personagem/1.webp'),loadImage('assets/personagem/2.webp'),loadImage('assets/personagem/3.webp'),loadImage('assets/personagem/4.webp'),loadImage('assets/personagem/5.webp'),loadImage('assets/personagem/6.webp'),loadImage('assets/personagem/7.webp'),loadImage('assets/personagem/8.webp'),loadImage('assets/personagem/9.png')]
     assets = [loadImage('assets/ui/textCard.webp'),loadImage('assets/ui/Vida.png'),loadImage('assets/ui/dead.png')]
     fonts = [loadFont('assets/fonts/NerkoOne-Regular.ttf'),loadFont('assets/fonts/Neucha-Regular.ttf')]
     buttons = [loadImage('assets/ui/button.png'),loadImage('assets/ui/buttonD.png')]
@@ -48,12 +48,16 @@ let personagens = [
         'imagem' : 6
     },
     {
-        'nome' : 'O Barão',
+        'nome' : 'O Bardo',
         'imagem' : 7
     },
     {
         nome: 'O Goblin Biscoiteiro',
         imagem: 8
+    },
+    {
+        nome: 'Narrador',
+        imagem:9
     }
 ]
 let Respostas = []
@@ -68,48 +72,165 @@ let timer;
 let TimeIsEnable = false
 let historia = [
     {
-        'texto': 'Animação do texto aparecendo, parece mágia eu sei mas é apenas javascript',
-        'personagem': 3,
-        'dica' : "Dica do Zé da Manga",
-        'alternativas': ["Próximo", "Não Valeu", "Eu te amo!", "Eu te Odeio!"],
+        "texto": "Seja bem vindo a Masmorra do Conhecimento! Você é um aventureiro em busca de respostas e conhecimento. Bem saiba que aqui você terá que responder perguntas e desafios para prosseguir. Boa sorte!",
+        "personagem": 0,
+        "dica": "Você deve aceitar a proposta",
+        "alternativas": ["Fazer o que né", "", "", ""],
+        "timer": false,
+        "correta": 0,
+        "ambiente" : 7
+    },
+    {
+        "texto": "Durante sua jornada, você encontra duas poções mágicas. Se você misturar uma poção que concede 2 de poder e outra que concede 2 de sabedoria usando o feitiço `console.log(2 + 2);`, quantos pontos de atributo você receberá no total?",
+        "personagem": 0,
+        "dica": "Você deve somar os poderes mágicos de forma simples!",
+        "alternativas": ["22", "4", "5", "3"],
+        "timer": true,
+        "correta": 1,
+        "ambiente" : 7
+    },
+    {
+        "texto": "No coração da Floresta Encantada, você encontra um sábia goblin que fala sobre os mistérios das trilhas mágicas. Ele pergunta: 'As estruturas de repetição são como os caminhos sinuosos da floresta. Será que elas alteram o fluxo do código mágico?'",
+        "personagem": 4,
+        "dica": "Imagine o código como um fluxograma encantado, onde cada decisão leva a uma nova trilha.",
+        "alternativas": ["Não.", "Pergunta no Posto Ipiranga.", "Sim.", "Nenhuma das alternativas."],
+        "timer": true,
+        "correta": 2,
+        "ambiente" : 6
+    },
+    {
+        "texto": "Enquanto atravessa a Floresta dos Feitiços, você encontra uma árvore antiga com uma inscrição misteriosa guardadas por um goblin. Se você decifrar o enigma 'typeof 'Hello World'', que segredo da floresta será revelado?",
+        "personagem": 3,
+        "dica": "As palavras antigas da árvore, retorna o tipo!",
+        "alternativas": ["string", "number", "object", "boolean"],
+        "timer": true,
+        "correta": 0,
+        "ambiente" : 6
+    },
+    {
+        "texto": "Ao decifrar você encontra um antigo tomo encantado intitulado 'Os Segredos da Magia'. Ao abri-lo, uma voz sussurra suavemente: 'O comando \"prompt()\" é como um espelho mágico que:'",
+        "personagem": 3,
+        "dica": "Alguém precisa ouvir o que esta sendo dito...",
+        "alternativas": ["Transforma os números em reais.", "Arredonda para a casa decimal escolhida;", "Capta as informações repassadas.", "Cria variáveis para o código."],
+        "timer": true,
+        "correta": 2,
+        "ambiente" : 6
+    },
+    {
+        "texto" : "Caraca, você é muito bom! Você conseguiu passar por todos os desafios da Floresta! Te acompanharei até a entrada da Gruta!",
+        "personagem" : 3,
+        "dica" : "",
+        "alternativas" : ["Agradeço!", "", "", ""],
+        "timer" : false,
+        "correta" : 0,
+        "ambiente" : 6
+    },
+    {
+        'texto': ' ',
+        'personagem': 100,
+        'dica' : "",
+        'alternativas': ["", "", "", ""],
         'timer' : false,
-        'correta' : 0
+        'correta' : 1,
+        "ambiente" : 8
     },
     {
-        'texto': 'Uwu Senpai, você é tão kawaii, me nota por favor',
-        'personagem': 4,
-        'dica' : "Dica do Zé da Manga",
-        'alternativas': ["Qual foi Truta", "Tá de cao né?", "", ""],
-        'timer' : true,
-        'correta' : 0
+        "texto" : "Eu me disperso aqui, boa jornada!",
+        "personagem" : 3,
+        "dica" : "",
+        "alternativas" : ["Até a proxima!", "", "", ""],
+        "timer" : false,
+        "correta" : 0,
+        "ambiente" : 8
     },
     {
-        'texto': 'O que é um peixe voador?',
-        'personagem': 5,
-        'dica' : "Dica do Zé da Manga",
-        'alternativas': ["Um pássaro", "Um peixe", "Um avião", "Uma piada"],
-        'timer' : true,
-        'correta' : 1
+        "texto": "Ao explorar as Ruínas do Conhecimento, você encontra um pergaminho encantado. Nele está escrito: 'Para adicionar uma nova lição à sua jornada, use o encantamento conhecido como...?'",
+        "personagem": 9,
+        "dica": "O pergaminho ensina o método frequentemente usado para manipular arrays!",
+        "alternativas": ["pop()", "shift()", "push()", "unshift()"],
+        "timer": true,
+        "correta": 2,
+        "ambiente" : 8
+    },
+    {
+        "texto": "Ao lançar o feitiço `console.log('5' == 5);` em seu mapa mágico, que revelação é trazida à luz?",
+        "personagem": 9,
+        "dica": "Contemple os mistérios das comparações entre diferentes essências.",
+        "alternativas": ["Uma true harmonia entre mundos", "Uma false nas essências", "A aura do número 5", "O eco da essência '5'"],
+        "timer": true,
+        "correta": 0,
+        "ambiente": 9
+    },
+    {
+        "texto": "Prazer eu sou o Bardo, e não posso permitir que você passe sem responder a minha charada!",
+        "personagem": 7,
+        "dica": "",
+        "alternativas": ["Fazer o que né", "", "", ""],
+        "timer": false,
+        "correta": 0,
+        "ambiente": 9
+    },
+    {
+        "texto": "No Vale dos Elementos, onde a terra encontra o céu, surge a necessidade de unir os elementos dispersos. Qual encantamento você conjuraria para combinar dois elementos em um só?",
+        "personagem": 7,
+        "dica": "Poder dos métodos que criam uma nova entidade.",
+        "alternativas": ["concat()", "join()", "push()", "slice()"],
+        "timer": true,
+        "correta": 0,
+        "ambiente": 9
+    },
+    {
+        "texto": "Mas assim, tão rápido? não vou te fazer mais uma pergunta então!",
+        "personagem": 7,
+        "dica": "",
+        "alternativas": ["É Serio isso?", "", "", ""],
+        "timer": false,
+        "correta": 0,
+        "ambiente": 9
+    },
+    {
+        "texto": "É a ultima eu prometo! Depois disso te levarei ao proximo andar!",
+        "personagem": 7,
+        "dica": "",
+        "alternativas": ["Tá bom!", "", "", ""],
+        "timer": false,
+        "correta": 0,
+        "ambiente": 9
+    },
+    {
+        "texto": "Você está combinando poderosos artefatos em uma jornada mágica. Qual seria o resultado quando você tenta combinar os artefatos `[1, 2, 3]` e `[4, 5, 6]`?",
+        "personagem": 7,
+        "dica": "Pense em como a linguagem JavaScript lida com a combinação de dois conjuntos de elementos.",
+        "alternativas": ["[1, 2, 3, 4, 5, 6]", "1,2,34,5,6", "TypeError", "123456"],
+        "timer": false,
+        "correta": 3,
+        "ambiente": 10
     }
+    
 ]
-let indice = 0
+let indice = 7 // A Fase a qual o jogo inicia
 let Alternativas = historia[indice].alternativas
 let transition = 0
 let transOpacity = 0
+
 function pageTransition() {
-    //crie um retangulo que ocupe a tela toda
     fill(0, 0, 0, transOpacity);
     rect(0, 0, width, height);
-    //faça a opacidade aumentar e então diminuir 
-    //enquanto transição for maior que 0 e menor que 255
-    if (transition > 0 && transition < 255) {
-        transOpacity += 5;
-    } else if (transition > 255 && transOpacity > 0) {
-        transOpacity -= 5;
+    textSize(50);
+    textFont(fonts[0]);
+    fill(255, 255, 255, transOpacity);
+    textAlign(CENTER, CENTER);
+    text("Carregando...", width / 2, height / 2);
+
+    if (transition > 0 && transition < 150) {
+        transOpacity += 10;
+    } else if (transition > 150 && transOpacity > 0) {
+        transOpacity -= 10;
     }
-    if (transition <= 600) {
+    if (transition <= 300) {
         transition += 1;
     }
+
     
 }
 
@@ -126,6 +247,16 @@ let Pontos = 0
  * @param {number} idPersonagem 
  */
 function gerarDialogo(texto_input, nome, idPersonagem) {
+
+    if (nome == undefined) {
+        nome = 'null';
+    }
+    if (idPersonagem == 100) {
+        transition = 1;
+        indice++;
+        return
+    }
+
     texto = texto_input;
     image(assets[0], 92, 732);
     image(personagem[idPersonagem], 1198, 102);
@@ -133,7 +264,8 @@ function gerarDialogo(texto_input, nome, idPersonagem) {
     textFont(fonts[1]);
     textLeading(30);
     fill("#310E10")
-    text(nome, 140, 785);
+    textAlign(LEFT,BASELINE);
+    text(nome ?? 'null', 140, 785);
     
     let tamanhoFonte = 35;
     let larguraMaxima = 1700; 
@@ -228,7 +360,7 @@ function buildResponseBTN(img, imgName, x, y,scaleSelected,texto, grayscale) {
     if (!scaleSelected) {
         scaleSelected = 1;
     }
-
+    textAlign (LEFT, BASELINE);
     let sx = img.width * scaleSelected;
     let sy = img.height * scaleSelected;
     let diferenceX = (sx - img.width) / 2;
@@ -335,7 +467,8 @@ function failResponse(id) {
 }
 
 function draw() {
-    image(cenarios[11],0,0); 
+    image(cenarios[historia[indice].ambiente],0,0,1920,1080); 
+
     drawLifes();
     if (Vidas > 0) {
         gerarPowerUps()
@@ -362,8 +495,10 @@ function draw() {
 
         }
         previousDialog = indice
-        gerarDialogo(historia[indice].texto,personagens[historia[indice].personagem].nome, personagens[historia[indice].personagem].imagem)
+        if ( transition == 0 || transition > 300) {
+        gerarDialogo(historia[indice]?.texto,personagens[historia[indice]?.personagem]?.nome ?? 'null', personagens[historia[indice]?.personagem]?.imagem ?? 100)
         Alternativas = historia[indice].alternativas
+        
         gerarTimer();
         gerarPontos();
 
@@ -376,6 +511,7 @@ function draw() {
             }
         }
     }
+}
     if (transition > 0) {
     pageTransition();
     }
@@ -387,7 +523,7 @@ function mouseReleased(event) {
     //? Power Ups
 
 
-    //Alternativas e respostas
+    if ( transition == 0 || transition > 300) {
     trackButtonAction('0', () => {
         sounds[0].play(); 
         if(!Respostas.includes(0)) {
@@ -430,7 +566,7 @@ function mouseReleased(event) {
             }
         }
     });
-
+    }
     //* Power Up Tempo Extra = Adiciona 30 segundos ao tempo    
     trackButtonAction('tempoExtra', () => {
         sounds[0].play(); 
