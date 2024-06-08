@@ -700,8 +700,11 @@ function mouseReleased(event) {
     );
 
     trackButtonAction('caixaMisteriosa', () => {
-        sounds[7].play();
-        indice++;
+        if (PowerUpsSelect.includes(3)) { 
+            sounds[7].play();
+            indice++;
+            PowerUpsSelect.splice(PowerUpsSelect.indexOf(3),1);
+        }
     }
     );
     }
