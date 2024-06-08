@@ -52,7 +52,7 @@ let personagens = [
         'imagem' : 7
     },
     {
-        nome: 'O Goblin Biscoiteiro',
+        nome: 'Zé da Manga sem chapéu',
         imagem: 8
     },
     {
@@ -205,10 +205,120 @@ let historia = [
         "timer": false,
         "correta": 3,
         "ambiente": 10
+    },
+    {
+        "texto" : "Como prometido, te levarei até a bruxa da masmorra no ultimo andar!",
+        "personagem" : 7,
+        "dica" : "",
+        "alternativas" : ["Obrigado!", "", "", ""],
+        "timer" : false,
+        "correta" : 0,
+        "ambiente" : 10
+    },
+    {
+        'texto': ' ',
+        'personagem': 100,
+        'dica' : "",
+        'alternativas': ["", "", "", ""],
+        'timer' : false,
+        'correta' : 1,
+        "ambiente" : 10
+    },
+    {
+        "texto": "Você começa a descer as escadas da masmorra, e nota um lugar amplo e iluminado como se fosse ao ceu aberto.",
+        "personagem": 9,
+        "dica": "",
+        "alternativas": ["Continuar", "", "", ""],
+        "timer": false,
+        "correta": 0,
+        "ambiente": 3
+    },
+    {
+        "texto" : "Você se depara com uma bruxa, ela te olha com um olhar de desdém e diz: 'O Que você faz em minha masmorra?",
+        "personagem" : 5,
+        "dica" : "",
+        "alternativas" : ["Vim em busca de conhecimento", "", "", ""],
+        "timer" : false,
+        "correta" : 0,
+        "ambiente" : 3
+    },
+    {
+        "texto" : "A bruxa te olha com um olhar de desdém e diz: 'Se você quer o conhecimento, responda a mim 3 perguntas!",
+        "personagem" : 5,
+        "dica" : "",
+        "alternativas" : ["Estou pronto!", "", "", ""],
+        "timer" : false,
+        "correta" : 0,
+        "ambiente" : 3
+    },
+    {
+        "texto": "Em uma jornada pela Terra dos Vetores, Zé da Manga se depara com um desafio: 'Se deparando com um enigma. Qual é o índice do valor mágico que você busca dentro do vetor? Se o valor aparecer mais de uma vez, todos os índices serão revelados!'",
+        "personagem": 5,
+        "dica": "Desbrave os segredos dos vetores e descubra o poder da busca.",
+        "alternativas": ["Os índices onde o valor é encontrado", "A soma dos índices onde o valor é encontrado", "O maior índice onde o valor é encontrado", "O menor índice onde o valor é encontrado"],
+        "timer": true,
+        "correta": 0,
+        "ambiente" : 3
+    },
+    {
+        'texto': 'O explorador estava com sua mochila cheia e precisava depositar mais um item que havia conseguido, mas não sabia o que tirar dela, sabendo que sua mochila pode carregar um total de 75Kg e que o novo item pesa 7kg quantos por cento ele precisa tirar da mochila para poder carregar esta item?',
+        'personagem': 5,
+        'dica' : "",
+        'alternativas': ["90,6", "89,8", "75", "70"],
+        'timer' : true,
+        'correta' : 0  ,
+        "ambiente" : 3  
+    },
+    {
+        'texto': 'Em uma taverna existem 40 exploradores, sabendo que 30% gostam de materiais radioativos, quantos exploradores não gostam desse tipo de material?',
+        'personagem': 5,
+        'dica' : "É um numero multiplo de 3 e 4",
+        'alternativas': ["16", "14", "12", "10"],
+        'timer' : false,
+        'correta' : 2    ,
+        "ambiente" : 3
+    },
+    {
+        'texto' : 'A Bruxa então te entrega um frasco com um liquido azul e diz: "Este é o liquido da sabedoria',
+        'personagem' : 9,
+        'dica' : "",
+        'alternativas' : ["Sair daqui!", "", "", ""],
+        'timer' : false,
+        'correta' : 0,
+        "ambiente" : 3
+    },
+    {
+        'texto' : 'Já distante da sala da bruxa, você decide abrir o frasco e ver se a poção realmente funciona!',
+        'personagem' : 9,
+        'dica' : "",
+        'alternativas' : ["Beber!", "", "", ""],
+        'timer' : false,
+        'correta' : 0,
+        "ambiente" : 3
+    },
+    {
+        'texto' : 'Caramba! aquela louca me prendeu em um pote de vidro! que mulheu maluca!',
+        'personagem' : 8,
+        'dica' : "",
+        'alternativas' : [" Você é o conhecimento?", "", "", ""],
+        'timer' : false,
+        'correta' : 0,
+        "ambiente" : 2
+    },
+    {
+        'texto' : ' ',
+        'personagem' : 101,
+        'dica' : "",
+        'alternativas' : ["", "", "", ""],
+        'timer' : false,
+        'correta' : 1,
+        "ambiente" : 2
     }
     
+
+    
 ]
-let indice = 7 // A Fase a qual o jogo inicia
+let indice = 16 // A Fase a qual o jogo inicia
 let Alternativas = historia[indice].alternativas
 let transition = 0
 let transOpacity = 0
@@ -318,10 +428,9 @@ function gerarPontos() {
 
 function gerarPowerUps() {
 
-        DrawPowerUps(PowerUps[0], 'caixaMisteriosa', 461, 85,PowerUpsSelect.includes(3) ? 1.15 : 1,!PowerUpsSelect.includes(3));
+        DrawPowerUps(PowerUps[0], 'caixaMisteriosa', 330, 78,PowerUpsSelect.includes(3) ? 1.15 : 1,!PowerUpsSelect.includes(3));
         DrawPowerUps(PowerUps[3], 'tempoExtra', 100, 90, PowerUpsSelect.includes(0) ? 1.15 : 1,!PowerUpsSelect.includes(0));
         DrawPowerUps(PowerUps[4], 'eliminaAlternativa', 220, 75, PowerUpsSelect.includes(1) ? 1.15 : 1,!PowerUpsSelect.includes(1));
-        DrawPowerUps(PowerUps[6], 'dica', 330, 78, PowerUpsSelect.includes(2) ? 1.15 : 1,!PowerUpsSelect.includes(2));
 }
 
 function DrawPowerUps(file, name, x, y, scaleSelected, grayscale) {
