@@ -66,7 +66,7 @@ let previousVidas = Vidas
 let numChars = 0
 let texto = ''
 let previousDialog
-let defaultTime = 30
+let defaultTime = 60
 let tempo = defaultTime
 let timer;
 let TimeIsEnable = false
@@ -703,6 +703,7 @@ function mouseReleased(event) {
         if (PowerUpsSelect.includes(3)) { 
             sounds[7].play();
             indice++;
+            tempo = defaultTime;
             PowerUpsSelect.splice(PowerUpsSelect.indexOf(3),1);
         }
     }
