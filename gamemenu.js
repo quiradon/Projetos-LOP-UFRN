@@ -7,7 +7,7 @@ function preload() {
     btn_creditos = loadImage('assets/ui/btn_creditos.webp')
     btn_modal = loadImage('assets/ui/modal.webp')
     closeBtn = loadImage('assets/close.png')
-    modal_guide = loadImage('assets/ui/Controles.webp')
+    modal_guide = loadImage('assets/ui/guide.png')
     creditos = loadImage('assets/creditos.png')
     pop = loadSound('assets/audio/pop.mp3')
     menuSound = loadSound('assets/audio/loop.mp3')

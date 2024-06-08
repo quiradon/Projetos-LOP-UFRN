@@ -2,10 +2,10 @@ function preload() {
     soundFormats('mp3', 'ogg');
     cenarios = [loadImage('assets/cenarios/1.webp'), loadImage('assets/cenarios/2.webp'), loadImage('assets/cenarios/3.webp'), loadImage('assets/cenarios/4.webp'), loadImage('assets/cenarios/5.webp'), loadImage('assets/cenarios/6.webp'), loadImage('assets/cenarios/7.webp'), loadImage('assets/cenarios/8.webp'), loadImage('assets/cenarios/9.webp'), loadImage('assets/cenarios/10.webp'), loadImage('assets/cenarios/11.webp'), loadImage('assets/cenarios/12.webp'), loadImage('assets/cenarios/13.webp')]
     personagem = [loadImage('assets/personagem/0.webp'),loadImage('assets/personagem/1.webp'),loadImage('assets/personagem/2.webp'),loadImage('assets/personagem/3.webp'),loadImage('assets/personagem/4.webp'),loadImage('assets/personagem/5.webp'),loadImage('assets/personagem/6.webp'),loadImage('assets/personagem/7.webp'),loadImage('assets/personagem/8.webp'),loadImage('assets/personagem/9.png')]
-    assets = [loadImage('assets/ui/textCard.webp'),loadImage('assets/ui/Vida.png'),loadImage('assets/ui/dead.png')]
+    assets = [loadImage('assets/ui/textCard.webp'),loadImage('assets/ui/Vida.png'),loadImage('assets/ui/dead.png'),loadImage('assets/ui/win.png')]
     fonts = [loadFont('assets/fonts/NerkoOne-Regular.ttf'),loadFont('assets/fonts/Neucha-Regular.ttf')]
     buttons = [loadImage('assets/ui/button.png'),loadImage('assets/ui/buttonD.png')]
-    sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3'),loadSound('assets/audio/fail.mp3'), loadSound('assets/audio/extra.mp3'),loadSound('assets/audio/dead.mp3'),loadSound('assets/audio/scribble-6144.mp3'),loadSound('assets/audio/timer.mp3')]
+    sounds = [loadSound('assets/audio/pop'),loadSound('assets/audio/loop.mp3'),loadSound('assets/audio/fail.mp3'), loadSound('assets/audio/extra.mp3'),loadSound('assets/audio/dead.mp3'),loadSound('assets/audio/scribble-6144.mp3'),loadSound('assets/audio/timer.mp3'),loadSound('assets/audio/caixaMisteriosa.mp3')]
     PowerUps = [loadImage('assets/ui/powerups/caixa0.png'),loadImage('assets/ui/powerups/caixa1.png'),loadImage('assets/ui/powerups/Tempo0.png'),loadImage('assets/ui/powerups/Tempo1.png'),loadImage('assets/ui/powerups/Espada.png'),loadImage('assets/ui/powerups/Espada2.png'),loadImage('assets/ui/powerups/Dica.png'),loadImage('assets/ui/powerups/Dica2.png')]
 
 }
@@ -297,28 +297,19 @@ let historia = [
         "ambiente" : 3
     },
     {
-        'texto' : 'Caramba! aquela louca me prendeu em um pote de vidro! que mulheu maluca!',
-        'personagem' : 8,
-        'dica' : "",
-        'alternativas' : [" Você é o conhecimento?", "", "", ""],
-        'timer' : false,
-        'correta' : 0,
-        "ambiente" : 2
-    },
-    {
-        'texto' : ' ',
-        'personagem' : 101,
+        'texto' : 'Você venceu!',
+        'personagem' : 102,
         'dica' : "",
         'alternativas' : ["", "", "", ""],
         'timer' : false,
-        'correta' : 1,
-        "ambiente" : 2
+        'correta' : 0,
+        "ambiente" : 3
     }
     
 
     
 ]
-let indice = 16 // A Fase a qual o jogo inicia
+let indice = 0 // A Fase a qual o jogo inicia
 let Alternativas = historia[indice].alternativas
 let transition = 0
 let transOpacity = 0
@@ -603,8 +594,16 @@ function draw() {
             Respostas = [];
 
         }
+        if (historia[indice]?.personagem == 102) {
+            console.log("Você venceu!");
+            image(assets[3], 0, 0);
+            return
+        }
+
         previousDialog = indice
+        
         if ( transition == 0 || transition > 300) {
+
         gerarDialogo(historia[indice]?.texto,personagens[historia[indice]?.personagem]?.nome ?? 'null', personagens[historia[indice]?.personagem]?.imagem ?? 100)
         Alternativas = historia[indice].alternativas
         
@@ -699,7 +698,13 @@ function mouseReleased(event) {
     
     }
     );
-}
+
+    trackButtonAction('caixaMisteriosa', () => {
+        sounds[7].play();
+        indice++;
+    }
+    );
+    }
 
 
 

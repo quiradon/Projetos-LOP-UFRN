@@ -5,8 +5,17 @@ html, body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-color: burlywood;
 }
 
 canvas {
   display: block;
+  border: 20px solid #251414;
+  width: 90vw;
+  height: 90vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
+

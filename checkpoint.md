@@ -1,0 +1,6 @@
+Acerto e Erro [X]
+Niveis de Dificuldade [X]
+Tempo [X]
+Pontuação [X]
+Wild Cards [X]
+Design [X]
